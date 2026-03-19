@@ -1,6 +1,24 @@
-const axios = require('axios');
+const { execSync } = require('child_process');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./sellvpn.db');
+const path = require('path');
+const db = new sqlite3.Database(path.join(__dirname, '../sellvpn.db'));
+
+function apiGet(url) {
+  try {
+    const result = execSync(`curl -s --max-time 15 "${url}"`, { encoding: 'utf8' });
+    return JSON.parse(result);
+  } catch (e) {
+    throw new Error(`curl gagal: ${e.message}`);
+  }
+}
+
+function getServer(serverId) {
+  return new Promise((resolve) => {
+    db.get('SELECT * FROM Server WHERE id = ?', [serverId], (err, server) => {
+      resolve(err || !server ? null : server);
+    });
+  });
+}
 
 // ==================== RENEW SSH ====================
 async function renewssh(username, exp, limitip, serverId) {
@@ -8,16 +26,14 @@ async function renewssh(username, exp, limitip, serverId) {
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
-  return new Promise((resolve, reject) => {
-    db.get('SELECT * FROM Server WHERE id = ?', [serverId], (err, server) => {
-      if (err || !server) return resolve('❌ Gagal: Server tidak ditemukan. Silakan coba lagi.');
-      const { domain, auth } = server;
-      const url = `https://${domain}/api/rensh?auth=${auth}&num=${username}&exp=${exp}`;
-      axios.get(url)
-        .then(response => {
-          if (response.data.status === "success") {
-            const d = response.data.data;
-            const msg = `
+  try {
+    const server = await getServer(serverId);
+    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    const { domain, auth } = server;
+    const res = apiGet(`http://${domain}:6969/api/rensh?auth=${auth}&num=${username}&exp=${exp}`);
+    if (res && res.status === "success") {
+      const d = res.data;
+      return `
 ────────────────────
 ❇️ *RENEW SSH PREMIUM* ❇️
 ────────────────────
@@ -30,17 +46,12 @@ async function renewssh(username, exp, limitip, serverId) {
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
 `;
-            return resolve(msg);
-          } else {
-            return resolve(`❌ Gagal: ${response.data.message || 'Unknown error'}`);
-          }
-        })
-        .catch(error => {
-          console.error('Error renew SSH:', error);
-          return resolve('❌ Gagal memperbarui SSH. Silakan coba lagi nanti.');
-        });
-    });
-  });
+    }
+    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+  } catch (error) {
+    console.error('Error renew SSH:', error.message);
+    return '❌ Gagal memperbarui SSH. Silakan coba lagi nanti.';
+  }
 }
 
 // ==================== RENEW VMESS ====================
@@ -49,16 +60,14 @@ async function renewvmess(username, exp, quota, limitip, serverId) {
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
-  return new Promise((resolve, reject) => {
-    db.get('SELECT * FROM Server WHERE id = ?', [serverId], (err, server) => {
-      if (err || !server) return resolve('❌ Gagal: Server tidak ditemukan. Silakan coba lagi.');
-      const { domain, auth } = server;
-      const url = `https://${domain}/api/renws?auth=${auth}&num=${username}&exp=${exp}`;
-      axios.get(url)
-        .then(response => {
-          if (response.data.status === "success") {
-            const d = response.data.data;
-            const msg = `
+  try {
+    const server = await getServer(serverId);
+    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    const { domain, auth } = server;
+    const res = apiGet(`http://${domain}:6969/api/renws?auth=${auth}&num=${username}&exp=${exp}`);
+    if (res && res.status === "success") {
+      const d = res.data;
+      return `
 ─────────────────────
 ❇️ *RENEW VMESS PREMIUM* ❇️
 ─────────────────────
@@ -71,17 +80,12 @@ async function renewvmess(username, exp, quota, limitip, serverId) {
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
 `;
-            return resolve(msg);
-          } else {
-            return resolve(`❌ Gagal: ${response.data.message || 'Unknown error'}`);
-          }
-        })
-        .catch(error => {
-          console.error('Error renew VMess:', error);
-          return resolve('❌ Gagal memperbarui VMess. Silakan coba lagi nanti.');
-        });
-    });
-  });
+    }
+    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+  } catch (error) {
+    console.error('Error renew VMess:', error.message);
+    return '❌ Gagal memperbarui VMess. Silakan coba lagi nanti.';
+  }
 }
 
 // ==================== RENEW VLESS ====================
@@ -90,16 +94,14 @@ async function renewvless(username, exp, quota, limitip, serverId) {
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
-  return new Promise((resolve, reject) => {
-    db.get('SELECT * FROM Server WHERE id = ?', [serverId], (err, server) => {
-      if (err || !server) return resolve('❌ Gagal: Server tidak ditemukan. Silakan coba lagi.');
-      const { domain, auth } = server;
-      const url = `https://${domain}/api/renvl?auth=${auth}&num=${username}&exp=${exp}`;
-      axios.get(url)
-        .then(response => {
-          if (response.data.status === "success") {
-            const d = response.data.data;
-            const msg = `
+  try {
+    const server = await getServer(serverId);
+    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    const { domain, auth } = server;
+    const res = apiGet(`http://${domain}:6969/api/renvl?auth=${auth}&num=${username}&exp=${exp}`);
+    if (res && res.status === "success") {
+      const d = res.data;
+      return `
 ─────────────────────
 ❇️ *RENEW VLESS PREMIUM* ❇️
 ─────────────────────
@@ -112,17 +114,12 @@ async function renewvless(username, exp, quota, limitip, serverId) {
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
 `;
-            return resolve(msg);
-          } else {
-            return resolve(`❌ Gagal: ${response.data.message || 'Unknown error'}`);
-          }
-        })
-        .catch(error => {
-          console.error('Error renew VLess:', error);
-          return resolve('❌ Gagal memperbarui VLess. Silakan coba lagi nanti.');
-        });
-    });
-  });
+    }
+    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+  } catch (error) {
+    console.error('Error renew VLess:', error.message);
+    return '❌ Gagal memperbarui VLess. Silakan coba lagi nanti.';
+  }
 }
 
 // ==================== RENEW TROJAN ====================
@@ -131,16 +128,14 @@ async function renewtrojan(username, exp, quota, limitip, serverId) {
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
-  return new Promise((resolve, reject) => {
-    db.get('SELECT * FROM Server WHERE id = ?', [serverId], (err, server) => {
-      if (err || !server) return resolve('❌ Gagal: Server tidak ditemukan. Silakan coba lagi.');
-      const { domain, auth } = server;
-      const url = `https://${domain}/api/rentr?auth=${auth}&num=${username}&exp=${exp}`;
-      axios.get(url)
-        .then(response => {
-          if (response.data.status === "success") {
-            const d = response.data.data;
-            const msg = `
+  try {
+    const server = await getServer(serverId);
+    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    const { domain, auth } = server;
+    const res = apiGet(`http://${domain}:6969/api/rentr?auth=${auth}&num=${username}&exp=${exp}`);
+    if (res && res.status === "success") {
+      const d = res.data;
+      return `
 ─────────────────────
 ❇️ *RENEW TROJAN PREMIUM* ❇️
 ─────────────────────
@@ -153,17 +148,12 @@ async function renewtrojan(username, exp, quota, limitip, serverId) {
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
 `;
-            return resolve(msg);
-          } else {
-            return resolve(`❌ Gagal: ${response.data.message || 'Unknown error'}`);
-          }
-        })
-        .catch(error => {
-          console.error('Error renew Trojan:', error);
-          return resolve('❌ Gagal memperbarui Trojan. Silakan coba lagi nanti.');
-        });
-    });
-  });
+    }
+    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+  } catch (error) {
+    console.error('Error renew Trojan:', error.message);
+    return '❌ Gagal memperbarui Trojan. Silakan coba lagi nanti.';
+  }
 }
 
 // ==================== RENEW SHADOWSOCKS ====================
@@ -172,16 +162,14 @@ async function renewshadowsocks(username, exp, quota, limitip, serverId) {
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
-  return new Promise((resolve, reject) => {
-    db.get('SELECT * FROM Server WHERE id = ?', [serverId], (err, server) => {
-      if (err || !server) return resolve('❌ Gagal: Server tidak ditemukan. Silakan coba lagi.');
-      const { domain, auth } = server;
-      const url = `https://${domain}/api/renss?auth=${auth}&num=${username}&exp=${exp}`;
-      axios.get(url)
-        .then(response => {
-          if (response.data.status === "success") {
-            const d = response.data.data;
-            const msg = `
+  try {
+    const server = await getServer(serverId);
+    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    const { domain, auth } = server;
+    const res = apiGet(`http://${domain}:6969/api/renss?auth=${auth}&num=${username}&exp=${exp}`);
+    if (res && res.status === "success") {
+      const d = res.data;
+      return `
 ─────────────────────
 ❇️ *RENEW SHDWSK PREMIUM* ❇️
 ─────────────────────
@@ -194,17 +182,12 @@ async function renewshadowsocks(username, exp, quota, limitip, serverId) {
 ✅ *Akun berhasil diperbarui* ✨
 *Makasih sudah pakai layanan kami*
 `;
-            return resolve(msg);
-          } else {
-            return resolve(`❌ Gagal: ${response.data.message || 'Unknown error'}`);
-          }
-        })
-        .catch(error => {
-          console.error('Error renew Shadowsocks:', error);
-          return resolve('❌ Gagal memperbarui Shadowsocks. Silakan coba lagi nanti.');
-        });
-    });
-  });
+    }
+    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+  } catch (error) {
+    console.error('Error renew Shadowsocks:', error.message);
+    return '❌ Gagal memperbarui Shadowsocks. Silakan coba lagi nanti.';
+  }
 }
 
 module.exports = { renewshadowsocks, renewtrojan, renewvless, renewvmess, renewssh };
