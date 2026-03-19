@@ -668,7 +668,7 @@ async function sendMainMenu(ctx) {
     // Buat pesan utama
     const messageText = `
 📦━━━━━━━━━━━━━━━━━━━━━📦
-      <b>✨  🅅🄿🄽 ✨</b>
+      <b>✨ 🄰🄽🅂🄴🄽🄳🄰🄽🅃 🅅🄿🄽 ✨</b>
 📦━━━━━━━━━━━━━━━━━━━━━📦
 
 <blockquote>ꜱᴇʟᴀᴍᴀᴛ ᴅᴀᴛᴀɴɢ ᴅɪ <b>${NAMA_STORE}</b> 💎
@@ -1458,14 +1458,14 @@ async function handleServiceAction(ctx, action) {
     keyboard = [
       [{ text: '💠 SSH', callback_data: 'trial_ssh' }],
       [{ text: '💠 Vmess', callback_data: 'trial_vmess' }, { text: '💠 Vless', callback_data: 'trial_vless' }],
-      [{ text: '💠 Trojan', callback_data: 'trial_trojan' }, { text: '💠 Shadowsocks', callback_data: 'trial_shadowsocks' }],
+      [{ text: '💠 Trojan', callback_data: 'trial_trojan' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   } else if (action === 'create') {
     keyboard = [
       [{ text: '✨ SSH', callback_data: 'create_ssh' }],
       [{ text: '✨ Vmess', callback_data: 'create_vmess' }, { text: '✨ Vless', callback_data: 'create_vless' }],
-      [{ text: '✨ Trojan', callback_data: 'create_trojan' }, { text: '✨ Shadowsocks', callback_data: 'create_shadowsocks' }],
+      [{ text: '✨ Trojan', callback_data: 'create_trojan' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   } else if (action === 'sewascript') {
@@ -1477,7 +1477,7 @@ async function handleServiceAction(ctx, action) {
     keyboard = [
       [{ text: '♻️ SSH', callback_data: 'renew_ssh' }],
       [{ text: '♻️ Vmess', callback_data: 'renew_vmess' }, { text: '♻️ Vless', callback_data: 'renew_vless' }],
-      [{ text: '♻️ Trojan', callback_data: 'renew_trojan' }, { text: '♻️ Shadowsocks', callback_data: 'renew_shadowsocks' }],
+      [{ text: '♻️ Trojan', callback_data: 'renew_trojan' }],
       [{ text: '🔙 Kembali', callback_data: 'send_main_menu' }]
     ];
   }
@@ -1793,44 +1793,44 @@ bot.action('toggle_sewascript_button', async (ctx) => {
   });
 });
 bot.action('service_create', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await handleServiceAction(ctx, 'create');
 });
 bot.action('trial_ssh', async (ctx) => {
-  if (!ctx || !ctx.match) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
+  if (!ctx) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
   await startSelectServer(ctx, 'trial', 'ssh');
 });
 
 bot.action('trial_vmess', async (ctx) => {
-  if (!ctx || !ctx.match) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
+  if (!ctx) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
   await startSelectServer(ctx, 'trial', 'vmess');
 });
 
 bot.action('trial_vless', async (ctx) => {
-  if (!ctx || !ctx.match) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
+  if (!ctx) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
   await startSelectServer(ctx, 'trial', 'vless');
 });
 
 bot.action('trial_trojan', async (ctx) => {
-  if (!ctx || !ctx.match) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
+  if (!ctx) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
   await startSelectServer(ctx, 'trial', 'trojan');
 });
 
 bot.action('trial_shadowsocks', async (ctx) => {
-  if (!ctx || !ctx.match) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
+  if (!ctx) { return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' }); }
   await startSelectServer(ctx, 'trial', 'shadowsocks');
 });
 
 bot.action('service_trial', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await handleServiceAction(ctx, 'trial');
 });
 bot.action('service_renew', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await handleServiceAction(ctx, 'renew');
@@ -1879,70 +1879,70 @@ bot.action('send_main_menu', async (ctx) => {
 
 
 bot.action('create_vmess', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'create', 'vmess');
 });
 
 bot.action('create_vless', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'create', 'vless');
 });
 
 bot.action('create_trojan', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'create', 'trojan');
 });
 
 bot.action('create_shadowsocks', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'create', 'shadowsocks');
 });
 
 bot.action('create_ssh', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'create', 'ssh');
 });
 
 bot.action('renew_vmess', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'renew', 'vmess');
 });
 
 bot.action('renew_vless', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'renew', 'vless');
 });
 
 bot.action('renew_trojan', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'renew', 'trojan');
 });
 
 bot.action('renew_shadowsocks', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'renew', 'shadowsocks');
 });
 
 bot.action('renew_ssh', async (ctx) => {
-  if (!ctx || !ctx.match) {
+  if (!ctx) {
     return ctx.reply('❌ *GAGAL!* Terjadi kesalahan saat memproses permintaan Anda. Silahkan coba lagi nanti.', { parse_mode: 'Markdown' });
   }
   await startSelectServer(ctx, 'renew', 'ssh');
