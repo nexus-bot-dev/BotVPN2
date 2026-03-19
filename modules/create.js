@@ -28,44 +28,51 @@ async function trialssh(username, password, exp, iplimit, serverId) {
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/trial-ssh?auth=${auth}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-──────────────────────           
-                 *✨SSH ACCOUNT✨*
-──────────────────────
-*Domain* : \`${d.host}\`
-*Username* : \`${d.username}\`
-*Password* : \`${d.password}\`
-*OpenSSH* : \`${d.ports?.openSSH || '22'}\`
-*Dropbear* : \`${d.ports?.dropbear || '143, 109'}\`
-*DropbearWS*: \`${d.ports?.dropbearWS || '443, 109'}\`
-*SSH UDP* : \`${d.ports?.sshUDP || '1-65535'}\`
-*SSH WS* : \`${d.ports?.sshWS || '80, 8080'}\`
-*SSH WS SSL*: \`${d.ports?.sshWSSSL || '443'}\`
-*BadVPN UDP*: \`${d.ports?.badVPN || '7100, 7300'}\`
+🌟 *TRIAL SSH* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.username}\`
+│ *Password* : \`${d.password}\`
+└─────────────────────
+┌─────────────────────
+│ *Domain*   : \`${d.host}\`
+│ *OpenSSH*  : \`${d.ports?.openSSH || '22'}\`
+│ *Dropbear* : \`${d.ports?.dropbear || '143, 109'}\`
+│ *SSH WS*   : \`${d.ports?.sshWS || '80, 8080'}\`
+│ *SSH SSL WS*: \`${d.ports?.sshWSSSL || '443'}\`
+│ *SSH UDP*  : \`${d.ports?.sshUDP || '1-65535'}\`
+│ *BadVPN UDP*: \`${d.ports?.badVPN || '7100, 7300'}\`
+│ *OVPN WS SSL*: \`${d.ports?.ovpnWSSSL || '443'}\`
+└─────────────────────
+🔗 *Link dan Payload*
 ───────────────────────
-🫧*HTTP CUSTOM*
+HTTP Custom      : 
 \`${d.formats?.port80 || `${d.host}:80@${d.username}:${d.password}`}\`
+Payload WSS      : 
+\`\`\`
+${d.payloads?.wsNtls || 'GET / HTTP/1.1[crlf]Host: [host][crlf]Upgrade: ws[crlf][crlf]'}
+\`\`\`
+Save Account Link: [Save Account](${d.saveLink})
 ───────────────────────
-🫧*Payload*: 
-\`${d.payloads?.wsNtls || 'GET / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]Upgrade: ws[crlf][crlf]'}\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.saveLink})
-──────────────────────
-*📅Expired*: \`${d.expired}\`
-*🌐City* : \`${d.city}\`
-──────────────────────
+┌─────────────────────
+│ Expires: \`${d.expired}\`
+│ City: \`${d.city}\`
+└─────────────────────
+
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error trial SSH:', error.message);
-    return '❌ Gagal membuat SSH. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat SSH. Silakan coba lagi nanti.';
   }
 }
 
@@ -77,47 +84,47 @@ async function trialvmess(username, exp, quota, limitip, serverId) {
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/trial-vmess?auth=${auth}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-              *✨VMESS ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-*Alter ID* : \`0\`
-*Security* : \`Auto\`
-*Path* : \`/vmess\`
-*Path gRPC*: \`vmess-grpc\`
-──────────────────────
-🫧*URL TLS:*
+🌟 *TRIAL VMESS* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Alter ID* : \`0\`
+│ *Security* : \`Auto\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/vmess\`
+│ *Path GRPC*: \`vmess-grpc\`
+└─────────────────────
+🔐 *URL VMESS TLS*
 \`\`\`
 ${d.ws_tls}
 \`\`\`
-🫧*URL HTTP:*
+🔓 *URL VMESS HTTP*
 \`\`\`
 ${d.ws_none_tls}
 \`\`\`
-🫧*URL gRPC:*
+🔒 *URL VMESS GRPC*
 \`\`\`
 ${d.grpc}
 \`\`\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.openclash})
-──────────────────────
-⏳*Expired*: \`${d.expired}\`
-──────────────────────
+┌─────────────────────
+│ Expires: \`${d.expired}\`
+└─────────────────────
+Save Account Link: [Save Account](${d.openclash})
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error trial VMess:', error.message);
-    return '❌ Gagal membuat VMess. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat VMess. Silakan coba lagi nanti.';
   }
 }
 
@@ -129,45 +136,46 @@ async function trialvless(username, exp, quota, limitip, serverId) {
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/trial-vless?auth=${auth}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-               *✨VLESS ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-*Path* : \`/vless\`
-*Path gRPC*: \`vless-grpc\`
-──────────────────────
-🫧*URL TLS:*
+🌟 *TRIAL VLESS* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Security* : \`Auto\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/vless\`
+│ *Path GRPC*: \`vless-grpc\`
+└─────────────────────
+🔐 *URL VLESS TLS*
 \`\`\`
 ${d.ws_tls}
 \`\`\`
-🫧*URL HTTP:*
+🔓 *URL VLESS HTTP*
 \`\`\`
 ${d.ws_none_tls}
 \`\`\`
-🫧*URL gRPC:*
+🔒 *URL VLESS GRPC*
 \`\`\`
 ${d.grpc}
 \`\`\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.openclash})
-──────────────────────
-⏳*Expired*: \`${d.expired}\`
-──────────────────────
+┌─────────────────────
+│ Expires: \`${d.expired}\`
+└─────────────────────
+Save Account Link: [Save Account](${d.openclash})
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error trial VLess:', error.message);
-    return '❌ Gagal membuat VLESS. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat VLESS. Silakan coba lagi nanti.';
   }
 }
 
@@ -179,41 +187,41 @@ async function trialtrojan(username, exp, quota, limitip, serverId) {
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/trial-trojan?auth=${auth}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-            *✨TROJAN ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-*Path* : \`/trojan-ws\`
-*Path gRPC*: \`trojan-grpc\`
-──────────────────────
-🫧*URL WS TLS:*
+🌟 *TRIAL TROJAN* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/trojan-ws\`
+│ *Path GRPC*: \`trojan-grpc\`
+└─────────────────────
+🔐 *URL TROJAN WS TLS*
 \`\`\`
 ${d.ws}
 \`\`\`
-🫧*URL gRPC:*
+🔒 *URL TROJAN GRPC*
 \`\`\`
 ${d.grpc}
 \`\`\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.openclash})
-──────────────────────
-⏳*Expired*: \`${d.expired}\`
-──────────────────────
+┌─────────────────────
+│ Expires: \`${d.expired}\`
+└─────────────────────
+Save Account Link: [Save Account](${d.openclash})
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error trial Trojan:', error.message);
-    return '❌ Gagal membuat Trojan. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat Trojan. Silakan coba lagi nanti.';
   }
 }
 
@@ -225,270 +233,298 @@ async function trialshadowsocks(username, exp, quota, limitip, serverId) {
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/trial-shadowsocks?auth=${auth}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-      *✨SHADOWSOCKS ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user || d.username}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-──────────────────────
-⏳*Expired*: \`${d.expired}\`
-──────────────────────
+🌟 *TRIAL SHADOWSOCKS* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user || d.username}\`
+│ *Domain*   : \`${d.domain}\`
+└─────────────────────
+┌─────────────────────
+│ Expires: \`${d.expired}\`
+└─────────────────────
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error trial Shadowsocks:', error.message);
-    return '❌ Gagal membuat Shadowsocks. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat Shadowsocks. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== CREATE SSH ====================
 async function createssh(username, password, exp, iplimit, serverId) {
-  console.log(`Creating SSH for ${username}`);
+  console.log(`Creating SSH account for ${username} with expiry ${exp} days, IP limit ${iplimit}, and password ${password}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/create-ssh?auth=${auth}&user=${username}&password=${password}&exp=${exp}&limitip=${iplimit}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-──────────────────────           
-                 *✨SSH ACCOUNT✨*
-──────────────────────
-*Domain* : \`${d.host}\`
-*Username* : \`${d.username}\`
-*Password* : \`${d.password}\`
-*OpenSSH* : \`${d.ports?.openSSH || '22'}\`
-*Dropbear* : \`${d.ports?.dropbear || '143, 109'}\`
-*DropbearWS*: \`${d.ports?.dropbearWS || '443, 109'}\`
-*SSH UDP* : \`${d.ports?.sshUDP || '1-65535'}\`
-*SSH WS* : \`${d.ports?.sshWS || '80, 8080'}\`
-*SSH WS SSL*: \`${d.ports?.sshWSSSL || '443'}\`
-*BadVPN UDP*: \`${d.ports?.badVPN || '7100, 7300'}\`
+🌟 *AKUN SSH PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.username}\`
+│ *Password* : \`${d.password}\`
+└─────────────────────
+┌─────────────────────
+│ *Domain*   : \`${d.host}\`
+│ *OpenSSH*  : \`${d.ports?.openSSH || '22'}\`
+│ *Dropbear* : \`${d.ports?.dropbear || '143, 109'}\`
+│ *SSH WS*   : \`${d.ports?.sshWS || '80, 8080'}\`
+│ *SSH SSL WS*: \`${d.ports?.sshWSSSL || '443'}\`
+│ *SSH UDP*  : \`${d.ports?.sshUDP || '1-65535'}\`
+│ *BadVPN UDP*: \`${d.ports?.badVPN || '7100, 7300'}\`
+│ *OVPN WS SSL*: \`${d.ports?.ovpnWSSSL || '443'}\`
+│ *OVPN TCP* : \`${d.ports?.ovpnTCP || '1194'}\`
+│ *OVPN UDP* : \`${d.ports?.ovpnUDP || '2200'}\`
+└─────────────────────
+🔗 *Link dan Payload*
 ───────────────────────
-🫧*HTTP CUSTOM*
+HTTP Custom      : 
 \`${d.formats?.port80 || `${d.host}:80@${d.username}:${d.password}`}\`
+Payload WSS      : 
+\`\`\`
+${d.payloads?.wsNtls || 'GET / HTTP/1.1[crlf]Host: [host][crlf]Upgrade: ws[crlf][crlf]'}
+\`\`\`
+Save Account Link: [Save Account](${d.saveLink})
 ───────────────────────
-🫧*Payload*: 
-\`${d.payloads?.wsNtls || 'GET / HTTP/1.1[crlf]Host: [host][crlf]Connection: Upgrade[crlf]Upgrade: ws[crlf][crlf]'}\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.saveLink})
-──────────────────────
-*📅IP Limit* : \`${d.limitIP}\`
-*⏳Expired* : \`${d.expired}\`
-*📆Expired Date*: \`${d.expiredDate}\`
-*🌐City* : \`${d.city}\`
-──────────────────────
+┌─────────────────────
+│ Expires: \`${d.expired}\`
+│ Exp Date: \`${d.expiredDate}\`
+│ IP Limit: \`${d.limitIP}\`
+│ City: \`${d.city}\`
+└─────────────────────
+
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error creating SSH:', error.message);
-    return '❌ Gagal membuat SSH. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat SSH. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== CREATE VMESS ====================
 async function createvmess(username, exp, quota, limitip, serverId) {
-  console.log(`Creating VMess for ${username}`);
+  console.log(`Creating VMess account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/create-vmess?auth=${auth}&user=${username}&quota=${quota}&limitip=${limitip}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-              *✨VMESS ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-*Alter ID* : \`0\`
-*Security* : \`Auto\`
-*Path* : \`/vmess\`
-*Path gRPC*: \`vmess-grpc\`
-──────────────────────
-🫧*URL TLS:*
+🌟 *AKUN VMESS PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Alter ID* : \`0\`
+│ *Security* : \`Auto\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/vmess\`
+│ *Path GRPC*: \`vmess-grpc\`
+└─────────────────────
+🔐 *URL VMESS TLS*
 \`\`\`
 ${d.ws_tls}
 \`\`\`
-🫧*URL HTTP:*
+🔓 *URL VMESS HTTP*
 \`\`\`
 ${d.ws_none_tls}
 \`\`\`
-🫧*URL gRPC:*
+🔒 *URL VMESS GRPC*
 \`\`\`
 ${d.grpc}
 \`\`\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.openclash})
-──────────────────────
-🚀*Quota*: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
-🌤*IP Limit*: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
-⏳*Expired*: \`${d.expired}\`
-📆*Expired Date*: \`${d.expiredDate}\`
-──────────────────────
+🔑 *UUID*
+\`\`\`
+${d.uuid}
+\`\`\`
+┌─────────────────────
+│ Expiry: \`${d.expired}\`
+│ Exp Date: \`${d.expiredDate}\`
+│ Quota: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
+│ IP Limit: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
+└─────────────────────
+Save Account Link: [Save Account](${d.openclash})
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error creating VMess:', error.message);
-    return '❌ Gagal membuat VMess. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat VMess. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== CREATE VLESS ====================
 async function createvless(username, exp, quota, limitip, serverId) {
-  console.log(`Creating VLess for ${username}`);
+  console.log(`Creating VLESS account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/create-vless?auth=${auth}&user=${username}&quota=${quota}&limitip=${limitip}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-               *✨VLESS ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-*Path* : \`/vless\`
-*Path gRPC*: \`vless-grpc\`
-──────────────────────
-🫧*URL TLS:*
+🌟 *AKUN VLESS PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Security* : \`Auto\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/vless\`
+│ *Path GRPC*: \`vless-grpc\`
+└─────────────────────
+🔐 *URL VLESS TLS*
 \`\`\`
 ${d.ws_tls}
 \`\`\`
-🫧*URL HTTP:*
+🔓 *URL VLESS HTTP*
 \`\`\`
 ${d.ws_none_tls}
 \`\`\`
-🫧*URL gRPC:*
+🔒 *URL VLESS GRPC*
 \`\`\`
 ${d.grpc}
 \`\`\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.openclash})
-──────────────────────
-🚀*Quota*: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
-🌤*IP Limit*: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
-⏳*Expired*: \`${d.expired}\`
-📆*Expired Date*: \`${d.expiredDate}\`
-──────────────────────
+🔑 *UUID*
+\`\`\`
+${d.uuid}
+\`\`\`
+┌─────────────────────
+│ Expiry: \`${d.expired}\`
+│ Exp Date: \`${d.expiredDate}\`
+│ Quota: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
+│ IP Limit: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
+└─────────────────────
+Save Account Link: [Save Account](${d.openclash})
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error creating VLess:', error.message);
-    return '❌ Gagal membuat VLESS. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat VLESS. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== CREATE TROJAN ====================
 async function createtrojan(username, exp, quota, limitip, serverId) {
-  console.log(`Creating Trojan for ${username}`);
+  console.log(`Creating Trojan account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/create-trojan?auth=${auth}&user=${username}&quota=${quota}&limitip=${limitip}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-            *✨TROJAN ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user}\`
-*Domain* : \`${d.domain}\`
-*UUID* : \`${d.uuid}\`
-*Path* : \`/trojan-ws\`
-*Path gRPC*: \`trojan-grpc\`
-──────────────────────
-🫧*URL WS TLS:*
+🌟 *AKUN TROJAN PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/trojan-ws\`
+│ *Path GRPC*: \`trojan-grpc\`
+└─────────────────────
+🔐 *URL TROJAN WS TLS*
 \`\`\`
 ${d.ws}
 \`\`\`
-🫧*URL gRPC:*
+🔒 *URL TROJAN GRPC*
 \`\`\`
 ${d.grpc}
 \`\`\`
-──────────────────────
-🫧*Save Account*: [Click Link](${d.openclash})
-──────────────────────
-🚀*Quota*: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
-🌤*IP Limit*: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
-⏳*Expired*: \`${d.expired}\`
-📆*Expired Date*: \`${d.expiredDate}\`
-──────────────────────
+🔑 *UUID*
+\`\`\`
+${d.uuid}
+\`\`\`
+┌─────────────────────
+│ Expiry: \`${d.expired}\`
+│ Exp Date: \`${d.expiredDate}\`
+│ Quota: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
+│ IP Limit: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
+└─────────────────────
+Save Account Link: [Save Account](${d.openclash})
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error creating Trojan:', error.message);
-    return '❌ Gagal membuat Trojan. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat Trojan. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== CREATE SHADOWSOCKS ====================
 async function createshadowsocks(username, exp, quota, limitip, serverId) {
-  console.log(`Creating Shadowsocks for ${username}`);
+  console.log(`Creating Shadowsocks account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/create-shadowsocks?auth=${auth}&user=${username}&quota=${quota}&limitip=${limitip}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────── 
-      *✨SHADOWSOCKS ACCOUNT✨*
-──────────────────────
-*Username* : \`${d.user || d.username}\`
-*Domain* : \`${d.domain}\`
-──────────────────────
-🚀*Quota*: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
-🌤*IP Limit*: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
-⏳*Expired*: \`${d.expired}\`
-──────────────────────
+🌟 *AKUN SHADOWSOCKS PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────
+│ *Username* : \`${d.user || d.username}\`
+│ *Domain*   : \`${d.domain}\`
+│ *Network*  : \`Websocket (WS)\`
+│ *Path*     : \`/ss-ws\`
+│ *Path GRPC*: \`ss-grpc\`
+└─────────────────────
+┌─────────────────────
+│ Expiry: \`${d.expired}\`
+│ Quota: \`${d.quota === '0 GB' ? 'Unlimited' : d.quota}\`
+│ IP Limit: \`${d.limitIP === '0' ? 'Unlimited' : d.limitIP} IP\`
+└─────────────────────
 ✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons.'}`;
   } catch (error) {
     console.error('Error creating Shadowsocks:', error.message);
-    return '❌ Gagal membuat Shadowsocks. Silakan coba lagi nanti.';
+    return '❌ Terjadi kesalahan saat membuat Shadowsocks. Silakan coba lagi nanti.';
   }
 }
 

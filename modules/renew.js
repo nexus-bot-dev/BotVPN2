@@ -22,171 +22,171 @@ function getServer(serverId) {
 
 // ==================== RENEW SSH ====================
 async function renewssh(username, exp, limitip, serverId) {
-  console.log(`Renewing SSH for ${username}`);
+  console.log(`Renewing SSH account for ${username} with expiry ${exp} days, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/rensh?auth=${auth}&num=${username}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-────────────────────
-❇️ *RENEW SSH PREMIUM* ❇️
-────────────────────
-┌───────────────────
-│ Username: \`${d.username}\`
-│ Sebelumnya: \`${d.previous_expiry}\`
-│ Ditambah: \`${d.days_added} Hari\`
-│ Kadaluarsa: \`${d.expired}\`
-└───────────────────
-✅ *Akun berhasil diperbarui* ✨
-*Makasih sudah pakai layanan kami*
+🌟 *RENEW SSH PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────────────
+│ Username   : \`${d.username}\`
+│ Sebelumnya : \`${d.previous_expiry}\`
+│ Ditambah   : \`${d.days_added} Hari\`
+│ Kadaluarsa : \`${d.expired}\`
+└─────────────────────────────
+✅ Akun ${d.username} berhasil diperbarui
+✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons dengan benar.'}`;
   } catch (error) {
-    console.error('Error renew SSH:', error.message);
-    return '❌ Gagal memperbarui SSH. Silakan coba lagi nanti.';
+    console.error('Error saat memperbarui SSH:', error.message);
+    return '❌ Terjadi kesalahan saat memperbarui SSH. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== RENEW VMESS ====================
 async function renewvmess(username, exp, quota, limitip, serverId) {
-  console.log(`Renewing VMess for ${username}`);
+  console.log(`Renewing VMess account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/renws?auth=${auth}&num=${username}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-─────────────────────
-❇️ *RENEW VMESS PREMIUM* ❇️
-─────────────────────
-┌────────────────────
-│ Username: \`${d.username}\`
-│ Sebelumnya: \`${d.previous_expiry}\`
-│ Ditambah: \`${d.days_added} Hari\`
-│ Kadaluarsa: \`${d.expired}\`
-└────────────────────
-✅ *Akun berhasil diperbarui* ✨
-*Makasih sudah pakai layanan kami*
+🌟 *RENEW VMESS PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────────────
+│ Username   : \`${d.username}\`
+│ Sebelumnya : \`${d.previous_expiry}\`
+│ Ditambah   : \`${d.days_added} Hari\`
+│ Kadaluarsa : \`${d.expired}\`
+└─────────────────────────────
+✅ Akun ${d.username} berhasil diperbarui
+✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons dengan benar.'}`;
   } catch (error) {
-    console.error('Error renew VMess:', error.message);
-    return '❌ Gagal memperbarui VMess. Silakan coba lagi nanti.';
+    console.error('Error saat memperbarui VMess:', error.message);
+    return '❌ Terjadi kesalahan saat memperbarui VMess. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== RENEW VLESS ====================
 async function renewvless(username, exp, quota, limitip, serverId) {
-  console.log(`Renewing VLess for ${username}`);
+  console.log(`Renewing VLess account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/renvl?auth=${auth}&num=${username}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-─────────────────────
-❇️ *RENEW VLESS PREMIUM* ❇️
-─────────────────────
-┌────────────────────
-│ Username: \`${d.username}\`
-│ Sebelumnya: \`${d.previous_expiry}\`
-│ Ditambah: \`${d.days_added} Hari\`
-│ Kadaluarsa: \`${d.expired}\`
-└────────────────────
-✅ *Akun berhasil diperbarui* ✨
-*Makasih sudah pakai layanan kami*
+🌟 *RENEW VLESS PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────────────
+│ Username   : \`${d.username}\`
+│ Sebelumnya : \`${d.previous_expiry}\`
+│ Ditambah   : \`${d.days_added} Hari\`
+│ Kadaluarsa : \`${d.expired}\`
+└─────────────────────────────
+✅ Akun ${d.username} berhasil diperbarui
+✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons dengan benar.'}`;
   } catch (error) {
-    console.error('Error renew VLess:', error.message);
-    return '❌ Gagal memperbarui VLess. Silakan coba lagi nanti.';
+    console.error('Error saat memperbarui VLess:', error.message);
+    return '❌ Terjadi kesalahan saat memperbarui VLess. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== RENEW TROJAN ====================
 async function renewtrojan(username, exp, quota, limitip, serverId) {
-  console.log(`Renewing Trojan for ${username}`);
+  console.log(`Renewing Trojan account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/rentr?auth=${auth}&num=${username}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-─────────────────────
-❇️ *RENEW TROJAN PREMIUM* ❇️
-─────────────────────
-┌────────────────────
-│ Username: \`${d.username}\`
-│ Sebelumnya: \`${d.previous_expiry}\`
-│ Ditambah: \`${d.days_added} Hari\`
-│ Kadaluarsa: \`${d.expired}\`
-└────────────────────
-✅ *Akun berhasil diperbarui* ✨
-*Makasih sudah pakai layanan kami*
+🌟 *RENEW TROJAN PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────────────
+│ Username   : \`${d.username}\`
+│ Sebelumnya : \`${d.previous_expiry}\`
+│ Ditambah   : \`${d.days_added} Hari\`
+│ Kadaluarsa : \`${d.expired}\`
+└─────────────────────────────
+✅ Akun ${d.username} berhasil diperbarui
+✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons dengan benar.'}`;
   } catch (error) {
-    console.error('Error renew Trojan:', error.message);
-    return '❌ Gagal memperbarui Trojan. Silakan coba lagi nanti.';
+    console.error('Error saat memperbarui Trojan:', error.message);
+    return '❌ Terjadi kesalahan saat memperbarui Trojan. Silakan coba lagi nanti.';
   }
 }
 
 // ==================== RENEW SHADOWSOCKS ====================
 async function renewshadowsocks(username, exp, quota, limitip, serverId) {
-  console.log(`Renewing Shadowsocks for ${username}`);
+  console.log(`Renewing Shadowsocks account for ${username} with expiry ${exp} days, quota ${quota} GB, limit IP ${limitip} on server ${serverId}`);
   if (/\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
     return '❌ Username tidak valid. Mohon gunakan hanya huruf dan angka tanpa spasi.';
   }
   try {
     const server = await getServer(serverId);
-    if (!server) return '❌ Gagal: Server tidak ditemukan. Silakan coba lagi.';
+    if (!server) return '❌ Server tidak ditemukan. Silakan coba lagi.';
     const { domain, auth } = server;
     const res = apiGet(`http://${domain}:6969/api/renss?auth=${auth}&num=${username}&exp=${exp}`);
     if (res && res.status === "success") {
       const d = res.data;
       return `
-─────────────────────
-❇️ *RENEW SHDWSK PREMIUM* ❇️
-─────────────────────
-┌────────────────────
-│ Username: \`${d.username}\`
-│ Sebelumnya: \`${d.previous_expiry}\`
-│ Ditambah: \`${d.days_added} Hari\`
-│ Kadaluarsa: \`${d.expired}\`
-└────────────────────
-✅ *Akun berhasil diperbarui* ✨
-*Makasih sudah pakai layanan kami*
+🌟 *RENEW SHADOWSOCKS PREMIUM* 🌟
+
+🔹 *Informasi Akun*
+┌─────────────────────────────
+│ Username   : \`${d.username}\`
+│ Sebelumnya : \`${d.previous_expiry}\`
+│ Ditambah   : \`${d.days_added} Hari\`
+│ Kadaluarsa : \`${d.expired}\`
+└─────────────────────────────
+✅ Akun ${d.username} berhasil diperbarui
+✨ Selamat menggunakan layanan kami! ✨
 `;
     }
-    return `❌ Gagal: ${res?.message || 'Server tidak merespons dengan benar.'}`;
+    return `❌ Terjadi kesalahan: ${res?.message || 'Server tidak merespons dengan benar.'}`;
   } catch (error) {
-    console.error('Error renew Shadowsocks:', error.message);
-    return '❌ Gagal memperbarui Shadowsocks. Silakan coba lagi nanti.';
+    console.error('Error saat memperbarui Shadowsocks:', error.message);
+    return '❌ Terjadi kesalahan saat memperbarui Shadowsocks. Silakan coba lagi nanti.';
   }
 }
 
