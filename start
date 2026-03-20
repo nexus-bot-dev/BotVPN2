@@ -6,10 +6,7 @@ neutral="\e[0m"
 orange="\e[38;5;130m"
 blue="\e[38;5;39m"
 yellow="\e[38;5;226m"
-purple="\e[38;5;141m"
-bold_white="\e[1;37m"
 reset="\e[0m"
-pink="\e[38;5;205m"
 
 hapus_bot_lama() {
     echo -e "${orange}Menghapus bot lama...${neutral}"
@@ -31,7 +28,7 @@ hapus_bot_lama() {
 pasang_package() {
     echo -e "${blue}Memulai pengecekan dan instalasi dependensi...${reset}"
 
-    # Install Node.js v20 (stabil untuk Debian 10+/Ubuntu 20+)
+    # Install Node.js v20
     if ! command -v node >/dev/null 2>&1 || ! node -v | grep -q 'v20'; then
         curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
         apt-get install -y nodejs
@@ -40,10 +37,12 @@ pasang_package() {
     # Downgrade npm ke versi 10 agar kompatibel
     npm install -g npm@10
 
+    # Install PM2 secara global
+    npm install -g pm2
+
     # Install dependencies APT
     apt update
-    apt install -y build-essential libcairo2-dev libpango1.0-dev \
-        libjpeg-dev libgif-dev librsvg2-dev pkg-config libpixman-1-dev git curl cron
+    apt install -y build-essential git curl cron
 }
 
 setup_bot() {
@@ -67,7 +66,7 @@ setup_bot() {
 server_app() {
     clear
     echo -e "${orange}─────────────────────────────────────────${neutral}"
-    echo -e "${green}- BOT SELLVPN TELEGRAM MOD BY LITE & XWAN${neutral}"
+    echo -e "${green}   BOT SELLVPN TELEGRAM BY NEXUSDEV       ${neutral}"
     echo -e "${orange}─────────────────────────────────────────${neutral}"
 
     read -p "Masukkan token bot: " token
@@ -105,7 +104,7 @@ server_app() {
 }
 EOF
 
-    # Deteksi lokasi node secara otomatis
+    # Deteksi lokasi node
     NODE_PATH=$(which node)
     if [ -z "$NODE_PATH" ]; then
         echo -e "${red}Node.js tidak ditemukan. Pastikan Node.js sudah terinstall.${neutral}"
@@ -113,43 +112,54 @@ EOF
     fi
     echo -e "${green}Node.js ditemukan di: $NODE_PATH${neutral}"
 
-    # Buat file autorun menggunakan path node absolut
-    cat >/usr/bin/sellvpn <<EOF
-#!/bin/bash
-cd /root/BotVPN2 || exit 1
-$NODE_PATH app.js
-EOF
-    chmod +x /usr/bin/sellvpn
-
-    # Buat systemd service file dengan ExecStart menggunakan path node absolut
-    cat >/etc/systemd/system/sellvpn.service <<EOF
-[Unit]
-Description=App Bot sellvpn Service
-After=network.target
-
-[Service]
-ExecStart=$NODE_PATH /root/BotVPN2/app.js
-WorkingDirectory=/root/BotVPN2
-Restart=always
-RestartSec=3
-User=root
-Environment=NODE_ENV=production
-Environment=TZ=Asia/Jakarta
-StandardOutput=append:/var/log/sellvpn.log
-StandardError=append:/var/log/sellvpn-error.log
-LimitNOFILE=10000
-
-[Install]
-WantedBy=multi-user.target
+    # Buat ecosystem.config.js untuk PM2
+    cat >/root/BotVPN2/ecosystem.config.js <<EOF
+module.exports = {
+  apps: [
+    {
+      name: 'sellvpn',
+      script: 'app.js',
+      cwd: '/root/BotVPN2',
+      interpreter: '$NODE_PATH',
+      restart_delay: 3000,
+      max_restarts: 10,
+      autorestart: true,
+      watch: false,
+      env: {
+        NODE_ENV: 'production',
+        TZ: 'Asia/Jakarta'
+      },
+      output: '/var/log/sellvpn.log',
+      error: '/var/log/sellvpn-error.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss'
+    }
+  ]
+};
 EOF
 
-    systemctl daemon-reload
-    systemctl enable sellvpn
-    systemctl start sellvpn
+    # Jalankan bot dengan PM2
+    cd /root/BotVPN2
+    pm2 start ecosystem.config.js
+
+    # Simpan config PM2 agar auto start setelah reboot
+    pm2 save
+
+    # Set PM2 startup agar jalan otomatis saat VPS reboot
+    pm2 startup systemd -u root --hp /root | tail -1 | bash
+
     service cron restart
 
-    echo -e "Status Server: $(systemctl is-active sellvpn)"
-    echo -e "${green}Bot berhasil diinstal dan sedang berjalan.${neutral}"
+    echo -e ""
+    echo -e "${orange}─────────────────────────────────────────${neutral}"
+    pm2 status sellvpn
+    echo -e "${orange}─────────────────────────────────────────${neutral}"
+    echo -e "${green}Bot berhasil diinstal dan berjalan dengan PM2.${neutral}"
+    echo -e "${yellow}Perintah PM2 berguna:${neutral}"
+    echo -e "  pm2 status           - Cek status bot"
+    echo -e "  pm2 logs sellvpn     - Lihat log bot"
+    echo -e "  pm2 restart sellvpn  - Restart bot"
+    echo -e "  pm2 stop sellvpn     - Stop bot"
+    echo -e "${orange}─────────────────────────────────────────${neutral}"
 }
 
 if [[ $1 == "sellvpn" ]]; then
